@@ -1,0 +1,83 @@
+<!--Realiza un chat-->
+
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+	<style>
+		#chat{
+		margin: 0 auto;
+		width: 300px;
+		text-align: center;
+		background-color: #04B45F;
+		padding: 10px;
+		}
+		#conversacion{
+		margin: 0 auto;
+		background-color: #D8D8D8;
+		width: 300px;
+		height: 200px;
+		overflow: auto;
+		}
+		
+
+	</style>
+</head>
+<body>
+	<div id="chat">
+	<div id="conversacion"></div>
+	
+		<textarea name="texto" id="texto" cols="34" rows="4">Escribe tu texto</textarea><br>
+		<input type="text" id="nombre" name="nombre" placeholder="introduzca su nombre">
+		<button id="enviar">Enviar</button>
+	</div>
+
+<script>
+	
+	
+
+
+	$('#enviar').click(function(event) {
+		var sNom = $('#nombre').val();
+		var sTexto = $('#texto').val();
+
+		$.post('insertarTexto.php', {
+			'nombre': sNom,
+			'texto': sTexto
+		}, function(respuesta) {
+			console.log(respuesta);
+    		//Respuesta 0: Todo ha ido bien
+    		//Respuesta 1: Ha ocurrido un error
+    		if(respuesta == 0) {
+    			$('#enviar').html('Publicado!');
+    		} else {
+    			$('#enviar').html('Volver a intentar');
+    		}
+    	});
+	});
+
+	$conversacion = $('conversacion');
+	var bScroll = true;
+	var refrescarMensajes = function() {
+		$.get('verConversacion.php', '', function(respuesta) {
+    		$('#conversacion').html(respuesta);
+    	});
+    	//scroll abajo
+    	$conversacion.hover(function(){
+    		bScroll = false;
+    	}, function(){
+    		bScroll = true;
+    	});
+    	if(bScroll)$conversacion.scrollTop($conversacion[0].scrollHeight);
+	}
+
+	setInterval('refrescarMensajes()', 200);
+
+
+
+
+</script>	
+</body>
+</html>
